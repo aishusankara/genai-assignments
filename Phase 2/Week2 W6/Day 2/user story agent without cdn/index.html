@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Story Test Case Generator</title>
+    <style>
+        /* CSS Variables for Theme */
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f5f5f5;
+            --bg-card: #ffffff;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --border-color: #e0e0e0;
+            --accent-color: #4a90d9;
+            --accent-hover: #3a7bc8;
+            --success-color: #28a745;
+            --error-color: #dc3545;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-theme {
+            --bg-primary: #1a1a2e;
+            --bg-secondary: #16213e;
+            --bg-card: #0f3460;
+            --text-primary: #e0e0e0;
+            --text-secondary: #b0b0b0;
+            --border-color: #3a3a5c;
+            --accent-color: #4a90d9;
+            --accent-hover: #5aa0e9;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+
+        /* Header Section */
+        .header {
+            background: linear-gradient(135deg, var(--accent-color), #6c5ce7);
+            color: white;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .theme-toggle-switch {
+            width: 50px;
+            height: 26px;
+            background-color: #ccc;
+            border-radius: 13px;
+            position: relative;
+            transition: background-color 0.3s;
+        }
+
+        .theme-toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background-color: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s;
+        }
+
+        .dark-theme .theme-toggle-switch {
+            background-color: #4a90d9;
+        }
+
+        .dark-theme .theme-toggle-switch::after {
+            transform: translateX(24px);
+        }
+
+        /* Description Section */
+        .description-section {
+            background-color: var(--bg-secondary);
+            padding: 20px 40px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .description-section h2 {
+            color: var(--accent-color);
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .description-section p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Main Container */
+        .main-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 20px 40px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        /* Card Styles */
+        .card {
+            background-color: var(--bg-card);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        .card-header {
+            background-color: var(--bg-secondary);
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        /* Jira Connection Section */
+        .jira-section {
+            grid-column: 1 / -1;
+        }
+
+        .connect-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+
+        .connect-btn:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .connect-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* User Stories Section */
+        .user-stories-section {
+            min-height: 400px;
+        }
+
+        .user-story-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+        }
+
+        .user-story-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .user-story-item:hover {
+            background-color: var(--bg-secondary);
+        }
+
+        .user-story-item:last-child {
+            border-bottom: none;
+        }
+
+        .user-story-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .user-story-item label {
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .story-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .action-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .view-btn {
+            background-color: #17a2b8;
+            color: white;
+        }
+
+        .view-btn:hover {
+            background-color: #138496;
+        }
+
+        .generate-btn {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .generate-btn:hover {
+            background-color: #218838;
+        }
+
+        /* Test Case Section */
+        .testcase-section {
+            min-height: 400px;
+        }
+
+        .testcase-output {
+            min-height: 250px;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            padding: 15px;
+            background-color: var(--bg-secondary);
+            font-family: 'Consolas', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            white-space: pre-wrap;
+        }
+
+        .testcase-output::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .output-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .copy-btn {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .copy-btn:hover {
+            background-color: #5a6268;
+        }
+
+        .clear-btn {
+            background-color: var(--error-color);
+            color: white;
+        }
+
+        .clear-btn:hover {
+            background-color: #c82333;
+        }
+
+        .export-btn {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .export-btn:hover {
+            background-color: #218838;
+        }
+
+        /* Welcome Message */
+        .welcome-message {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        /* Error Message */
+        .error-message {
+            color: var(--error-color);
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            background-color: rgba(220, 53, 69, 0.1);
+            border: 1px solid var(--error-color);
+        }
+
+        /* Loading Spinner */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 4px solid var(--border-color);
+            border-top: 4px solid var(--accent-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* User Story Detail Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: var(--bg-card);
+            border-radius: 10px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow);
+        }
+
+        .modal-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
+        .close-modal:hover {
+            color: var(--text-primary);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 900px) {
+            .main-container {
+                grid-template-columns: 1fr;
+                padding: 15px;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .description-section {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <h1>🧪 User Story Test Case Generator</h1>
+        <div class="header-controls">
+            <div class="theme-toggle" onclick="toggleTheme()">
+                <span>☀️</span>
+                <div class="theme-toggle-switch"></div>
+                <span>🌙</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Description Section -->
+    <section class="description-section">
+        <h2>About This Tool</h2>
+        <p>
+            This Test Case Generator helps QA engineers and developers automatically generate comprehensive test cases 
+            from Jira user stories. Connect to your Jira instance, select user stories, and let AI generate detailed 
+            test cases covering positive scenarios, negative scenarios, boundary conditions, and error handling. 
+            Export your test cases to Excel for easy integration with your testing workflow.
+        </p>
+    </section>
+
+    <!-- Main Container -->
+    <main class="main-container">
+        <!-- Jira Connection Section -->
+        <section class="card jira-section">
+            <div class="card-header">
+                <span>🔗 Jira Connection</span>
+                <span id="connectionStatus"></span>
+            </div>
+            <div class="card-body">
+                <button class="connect-btn" id="connectBtn" onclick="connectToJira()">
+                    Connect to Jira
+                </button>
+                <div class="loading" id="jiraLoading">
+                    <div class="spinner"></div>
+                    <p>Connecting to Jira...</p>
+                </div>
+                <div id="jiraError" class="error-message" style="display: none;"></div>
+            </div>
+        </section>
+
+        <!-- User Stories Section -->
+        <section class="card user-stories-section">
+            <div class="card-header">
+                <span>📋 User Stories</span>
+                <span id="storyCount"></span>
+            </div>
+            <div class="card-body">
+                <div class="user-story-list" id="userStoryList">
+                    <div class="welcome-message">
+                        Connect to Jira to load user stories
+                    </div>
+                </div>
+                <div class="story-actions">
+                    <button class="action-btn view-btn" onclick="viewUserStory()" disabled id="viewStoryBtn">
+                        👁️ View User Story
+                    </button>
+                    <button class="action-btn generate-btn" onclick="generateTestCases()" disabled id="generateBtn">
+                        ⚡ Generate Test Cases
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Test Case Output Section -->
+        <section class="card testcase-section">
+            <div class="card-header">
+                <span>📝 Generated Test Cases</span>
+            </div>
+            <div class="card-body">
+                <div class="testcase-output" id="testcaseOutput">
+                    Am Aishubot Here Type your user stories
+                </div>
+                <div class="loading" id="testcaseLoading">
+                    <div class="spinner"></div>
+                    <p>Generating test cases...</p>
+                </div>
+                <div id="testcaseError" class="error-message" style="display: none;"></div>
+                <div class="output-actions">
+                    <button class="action-btn copy-btn" onclick="copyTestCases()">
+                        📋 Copy
+                    </button>
+                    <button class="action-btn clear-btn" onclick="clearTestCases()">
+                        🗑️ Clear
+                    </button>
+                    <button class="action-btn export-btn" onclick="exportToExcel()">
+                        📊 Export to Excel
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- User Story Detail Modal -->
+    <div class="modal" id="storyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">User Story Details</h3>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- User story details will be displayed here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // CONFIGURATION - Edit these values as needed
+        // ============================================
+        const CONFIG = {
+            // Base URL for Langflow API
+            BASE_URL: 'http://localhost:7860/api/v1/run',
+            
+            // Flow IDs
+            USER_STORY_REVIEW_FLOW_ID: '15435741-d48a-4056-8579-a43a7a84e6e4',
+            TEST_CASE_GENERATOR_FLOW_ID: 'b6629b62-453e-4dae-b13c-2fbe80d28d8b',
+            
+            // API Key
+            API_KEY: 'sk-Bt3nslUkq-oXbOuPpCtkNEquPegTbV9hhDyePKrJYQ4',
+            
+            // Model Configuration
+            USER_STORY_MODEL: 'llama-3.3-70b-versatile',
+            TEST_CASE_MODEL: 'llama-3.3-70b-versatile',
+            TEST_CASE_TEMPERATURE: 0.1
+        };
+
+        // ============================================
+        // STATE MANAGEMENT
+        // ============================================
+        let userStories = [];
+        let selectedStoryId = null;
+        let generatedTestCases = '';
+
+        // ============================================
+        // THEME TOGGLE
+        // ============================================
+        function toggleTheme() {
+            document.body.classList.toggle('dark-theme');
+            localStorage.setItem('theme', document.body.classList.contains('dark-theme') ? 'dark' : 'light');
+        }
+
+        // Load saved theme
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-theme');
+        }
+
+        // ============================================
+        // UTILITY FUNCTIONS
+        // ============================================
+        function showError(elementId, message) {
+            const errorEl = document.getElementById(elementId);
+            errorEl.textContent = message;
+            errorEl.style.display = 'block';
+        }
+
+        function hideError(elementId) {
+            const errorEl = document.getElementById(elementId);
+            errorEl.style.display = 'none';
+        }
+
+        function showLoading(elementId) {
+            document.getElementById(elementId).style.display = 'block';
+        }
+
+        function hideLoading(elementId) {
+            document.getElementById(elementId).style.display = 'none';
+        }
+
+        function getSelectedStories() {
+            const checkboxes = document.querySelectorAll('.story-checkbox:checked');
+            console.log('Checked checkboxes:', checkboxes.length);
+            const selected = Array.from(checkboxes).map(cb => {
+                const storyId = cb.value;
+                console.log('Looking for story with id:', storyId);
+                console.log('Available userStories:', userStories.map(s => s.id));
+                const found = userStories.find(s => s.id === storyId || s.key === storyId);
+                console.log('Found story:', found);
+                return found;
+            }).filter(Boolean);
+            console.log('Selected stories:', selected);
+            return selected;
+        }
+
+        function updateButtonStates() {
+            const selectedStories = getSelectedStories();
+            document.getElementById('viewStoryBtn').disabled = selectedStories.length !== 1;
+            document.getElementById('generateBtn').disabled = selectedStories.length === 0;
+        }
+
+        // ============================================
+        // JIRA CONNECTION - Calls User Story Review Agent
+        // ============================================
+        async function connectToJira() {
+            const connectBtn = document.getElementById('connectBtn');
+            const connectionStatus = document.getElementById('connectionStatus');
+            
+            hideError('jiraError');
+            showLoading('jiraLoading');
+            connectBtn.disabled = true;
+            connectionStatus.textContent = '';
+
+            try {
+                const endpoint = `${CONFIG.BASE_URL}/${CONFIG.USER_STORY_REVIEW_FLOW_ID}?stream=false`;
+                
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': CONFIG.API_KEY
+                    },
+                    body: JSON.stringify({
+                        output_type: 'chat',
+                        input_type: 'text',
+                        input_value: 'Fetch all user stories from Jira'
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('Jira API Response received');
+                
+                // Parse the response to extract user stories
+                userStories = parseUserStoriesFromResponse(data);
+                console.log('userStories after parsing:', userStories);
+                console.log('userStories.length:', userStories.length);
+                
+                if (userStories.length > 0) {
+                    connectionStatus.textContent = '✅ Connected';
+                    connectionStatus.style.color = 'var(--success-color)';
+                    console.log('Calling renderUserStories...');
+                    renderUserStories();
+                    console.log('renderUserStories completed');
+                    document.getElementById('storyCount').textContent = `(${userStories.length} stories)`;
+                } else {
+                    connectionStatus.textContent = '⚠️ No stories found';
+                    connectionStatus.style.color = 'orange';
+                    document.getElementById('userStoryList').innerHTML = '<div class="welcome-message">No user stories found in Jira. Please check your Jira project configuration.</div>';
+                    document.getElementById('storyCount').textContent = '(0 stories)';
+                }
+
+            } catch (error) {
+                console.error('Jira connection error:', error);
+                showError('jiraError', `Failed to connect: ${error.message}`);
+                connectionStatus.textContent = '❌ Failed';
+                connectionStatus.style.color = 'var(--error-color)';
+                document.getElementById('userStoryList').innerHTML = '<div class="welcome-message">Failed to connect to Jira. Please check your connection and try again.</div>';
+            } finally {
+                hideLoading('jiraLoading');
+                connectBtn.disabled = false;
+                connectBtn.textContent = 'Reconnect';
+            }
+        }
+
+        function parseUserStoriesFromResponse(data) {
+            try {
+                const stories = [];
+                const seenKeys = new Set();
+                
+                // FIRST: Try to extract from raw Jira JSON structure (issues array)
+                // This handles: {"issues": [{"key": "GEN-1", "fields": {"summary": "...", "description": {...}}}]}
+                const rawDataStr = JSON.stringify(data);
+                
+                // Look for "issues" array in the response
+                const issuesMatch = rawDataStr.match(/"issues"\s*:\s*\[/);
+                if (issuesMatch) {
+                    console.log('Found Jira issues array in raw response');
+                    
+                    // Try to extract individual issue objects
+                    // Pattern: "key":"GEN-XX" followed by "fields":{"summary":"..."}
+                    const keyPattern = /"key"\s*:\s*"([A-Z]+-\d+)"/g;
+                    let match;
+                    
+                    while ((match = keyPattern.exec(rawDataStr)) !== null) {
+                        const key = match[1];
+                        if (seenKeys.has(key)) continue;
+                        seenKeys.add(key);
+                        
+                        // Get context around this key (2000 chars after)
+                        const startIdx = match.index;
+                        const contextBlock = rawDataStr.substring(startIdx, startIdx + 2000);
+                        
+                        // Extract fields.summary - look for "summary":"value" after fields
+                        let summary = '';
+                        const summaryMatch = contextBlock.match(/"fields"\s*:\s*\{[^}]*"summary"\s*:\s*"([^"]+)"/);
+                        if (summaryMatch) {
+                            summary = summaryMatch[1];
+                        } else {
+                            // Try simpler pattern
+                            const simpleSummary = contextBlock.match(/"summary"\s*:\s*"([^"]+)"/);
+                            if (simpleSummary && simpleSummary[1] !== 'null') {
+                                summary = simpleSummary[1];
+                            }
+                        }
+                        
+                        // Extract description text from Atlassian Document Format
+                        // Pattern: "description":{"type":"doc",...,"text":"actual text"}
+                        let description = '';
+                        const descTextMatch = contextBlock.match(/"description"[^}]*"text"\s*:\s*"([^"]+)"/);
+                        if (descTextMatch) {
+                            description = descTextMatch[1];
+                        }
+                        
+                        if (summary || description) {
+                            console.log('RAW JSON PARSED:', key, '- Summary:', summary.substring(0, 50));
+                            stories.push({
+                                id: key,
+                                key: key,
+                                title: summary || `User Story ${key}`,
+                                summary: summary || description || `User Story ${key}`,
+                                description: description || summary || 'No description',
+                                status: 'To Do',
+                                priority: 'Medium',
+                                assignee: 'Unassigned',
+                                acceptanceCriteria: ''
+                            });
+                        }
+                    }
+                }
+                
+                // If we found stories from raw JSON, return them
+                if (stories.length > 0) {
+                    console.log('=== FINAL STORIES FROM RAW JSON:', stories.length, '===');
+                    return stories;
+                }
+                
+                // SECOND: Fall back to LLM-formatted text parsing
+                console.log('Falling back to LLM text parsing...');
+                
+                // Convert entire response to string
+                const fullJsonString = JSON.stringify(data);
+                console.log('Raw JSON length:', fullJsonString.length);
+                
+                // Decode escaped newlines to real newlines
+                let decodedString = fullJsonString
+                    .split('\\n').join('\n')
+                    .split('\\r').join('')
+                    .split('\\t').join('\t');
+                
+                // IMPORTANT: Replace special dash characters with regular hyphen
+                decodedString = decodedString
+                    .replace(/[\u2010\u2011\u2012\u2013\u2014\u2015\u2212]/g, '-');
+                
+                // Strip markdown bold markers **text**
+                decodedString = decodedString.replace(/\*\*/g, '');
+                
+                // Strip HTML tags like <p>, </p>
+                decodedString = decodedString.replace(/<[^>]*>/g, '');
+                
+                console.log('Full decoded string:', decodedString);
+                
+                // Find all JIRA keys in the text (e.g., GEN-24, GEN-22, etc.)
+                const keyPattern = /([A-Z]+-\d+)/g;
+                const allKeys = [];
+                let match;
+                while ((match = keyPattern.exec(decodedString)) !== null) {
+                    if (!allKeys.includes(match[1])) {
+                        allKeys.push(match[1]);
+                    }
+                }
+                console.log('Found JIRA keys:', allKeys);
+                
+                // For each unique key, find its Title and Description
+                for (const key of allKeys) {
+                    // Skip duplicates
+                    if (seenKeys.has(key)) continue;
+                    seenKeys.add(key);
+                    
+                    // Find the section for this key - look for the key followed by Title/Description
+                    // Pattern: KEY\n(Title: ...)\n(Description: ...)
+                    const keyEscaped = key.replace(/[-]/g, '-');
+                    
+                    // Find where this key appears and extract the following text
+                    const keyIndex = decodedString.indexOf(key);
+                    if (keyIndex === -1) continue;
+                    
+                    // Get the text block after this key (up to next key or end)
+                    const afterKey = decodedString.substring(keyIndex + key.length);
+                    const nextKeyMatch = afterKey.match(/[A-Z]+-\d+/);
+                    const blockEnd = nextKeyMatch ? afterKey.indexOf(nextKeyMatch[0]) : afterKey.length;
+                    const block = afterKey.substring(0, blockEnd);
+                    
+                    let title = '';
+                    let description = '';
+                    
+                    // Extract Title
+                    const titleMatch = block.match(/Title:\s*([^\n]+)/i);
+                    if (titleMatch) {
+                        title = titleMatch[1].trim();
+                    }
+                    
+                    // Extract Description
+                    const descMatch = block.match(/Description:\s*([^\n]+)/i);
+                    if (descMatch) {
+                        description = descMatch[1].trim();
+                        description = description.replace(/["}\]]+$/g, '').trim();
+                    }
+                    
+                    // Use title or description as display text
+                    const displayText = title || description || `User Story ${key}`;
+                    
+                    console.log('PARSED:', key, '- Title:', title.substring(0, 50), '- Desc:', description.substring(0, 50));
+                    
+                    stories.push({
+                        id: key,
+                        key: key,
+                        title: displayText,
+                        summary: displayText,
+                        description: description || title || 'No description',
+                        status: 'To Do',
+                        priority: 'Medium',
+                        assignee: 'Unassigned',
+                        acceptanceCriteria: ''
+                    });
+                }
+                
+                console.log('=== FINAL STORIES COUNT:', stories.length, '===');
+                
+                return stories;
+                
+            } catch (e) {
+                console.error('Error parsing user stories:', e);
+                return [];
+            }
+        }
+
+        // ============================================
+        // RENDER USER STORIES
+        // ============================================
+        function renderUserStories() {
+            console.log('renderUserStories called');
+            console.log('userStories to render:', userStories);
+            
+            const listEl = document.getElementById('userStoryList');
+            console.log('userStoryList element:', listEl);
+            
+            if (userStories.length === 0) {
+                listEl.innerHTML = '<div class="welcome-message">No user stories found</div>';
+                return;
+            }
+
+            const html = userStories.map(story => `
+                <div class="user-story-item">
+                    <input type="checkbox" 
+                           class="story-checkbox" 
+                           id="story-${story.id}" 
+                           value="${story.id}"
+                           onchange="updateButtonStates()">
+                    <label for="story-${story.id}">
+                        <strong>${story.key}</strong>: ${story.summary}
+                    </label>
+                </div>
+            `).join('');
+            
+            console.log('Generated HTML:', html);
+            listEl.innerHTML = html;
+            console.log('DOM updated');
+        }
+
+        // ============================================
+        // VIEW USER STORY
+        // ============================================
+        function viewUserStory() {
+            const selectedStories = getSelectedStories();
+            
+            if (selectedStories.length !== 1) {
+                alert('Please select exactly one user story to view');
+                return;
+            }
+
+            const story = selectedStories[0];
+            console.log('Viewing story:', story);
+            
+            document.getElementById('modalTitle').textContent = `${story.key}`;
+            document.getElementById('modalBody').innerHTML = `
+                <div style="margin-bottom: 15px;">
+                    <strong>Title:</strong>
+                    <p style="margin-top: 5px; font-size: 1.1em; font-weight: 500;">${story.title || story.summary || 'No title available'}</p>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <strong>Summary:</strong>
+                    <p style="margin-top: 5px; line-height: 1.6;">${story.summary || 'No summary available'}</p>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <strong>Description:</strong>
+                    <p style="margin-top: 5px; line-height: 1.6; white-space: pre-wrap;">${story.description || 'No description available'}</p>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <strong>Status:</strong> <span style="padding: 3px 8px; background: var(--accent-color); color: white; border-radius: 3px;">${story.status || 'To Do'}</span>
+                    <strong style="margin-left: 15px;">Priority:</strong> ${story.priority || 'Medium'}
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <strong>Assignee:</strong> ${story.assignee || 'Unassigned'}
+                </div>
+                <div>
+                    <strong>Acceptance Criteria:</strong>
+                    <pre style="margin-top: 5px; white-space: pre-wrap; background: var(--bg-secondary); padding: 10px; border-radius: 5px;">${story.acceptanceCriteria || 'No acceptance criteria defined'}</pre>
+                </div>
+            `;
+            document.getElementById('storyModal').style.display = 'flex';
+        }
+
+        // ============================================
+        // GENERATE TEST CASES - Calls Test Case Generator API
+        // ============================================
+        async function generateTestCases() {
+            const selectedStories = getSelectedStories();
+            console.log('Selected stories for test generation:', selectedStories);
+            
+            if (selectedStories.length === 0) {
+                alert('Please select at least one user story');
+                return;
+            }
+
+            hideError('testcaseError');
+            showLoading('testcaseLoading');
+            document.getElementById('testcaseOutput').textContent = 'Generating test cases...';
+            document.getElementById('generateBtn').disabled = true;
+
+            try {
+                // Build input from selected stories
+                const storyTexts = selectedStories.map(story => {
+                    return `User Story ${story.key}:
+Title: ${story.title || story.summary}
+Summary: ${story.summary}
+Description: ${story.description}`;
+                }).join('\n\n---\n\n');
+
+                const inputValue = `Generate test cases for the following user story:\n\n${storyTexts}`;
+                console.log('Input value for test case generation:', inputValue);
+
+                const endpoint = `${CONFIG.BASE_URL}/${CONFIG.TEST_CASE_GENERATOR_FLOW_ID}?stream=false`;
+                console.log('Calling endpoint:', endpoint);
+                
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': CONFIG.API_KEY
+                    },
+                    body: JSON.stringify({
+                        output_type: 'chat',
+                        input_type: 'chat',
+                        input_value: inputValue
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('Test case API response received:', data);
+                
+                // Parse the response to extract test cases
+                generatedTestCases = parseTestCasesFromResponse(data);
+                console.log('Parsed test cases length:', generatedTestCases.length);
+                
+                if (generatedTestCases && generatedTestCases.length > 30) {
+                    document.getElementById('testcaseOutput').textContent = generatedTestCases;
+                } else {
+                    document.getElementById('testcaseOutput').textContent = generatedTestCases || 'No test cases generated. Please try again.';
+                }
+
+            } catch (error) {
+                console.error('Test case generation error:', error);
+                showError('testcaseError', `Failed to generate: ${error.message}`);
+                document.getElementById('testcaseOutput').textContent = 'Failed to generate test cases. Please check if Langflow is running and try again.';
+            } finally {
+                hideLoading('testcaseLoading');
+                document.getElementById('generateBtn').disabled = false;
+                updateButtonStates();
+            }
+        }
+
+        function parseTestCasesFromResponse(data) {
+            try {
+                console.log('Test case API response:', data);
+                
+                // Convert entire response to string and decode
+                const fullJsonString = JSON.stringify(data);
+                let decodedString = fullJsonString
+                    .split('\\n').join('\n')
+                    .split('\\r').join('')
+                    .split('\\t').join('\t')
+                    .replace(/\\"/g, '"');
+                
+                // Replace special dash characters
+                decodedString = decodedString
+                    .replace(/\u2011/g, '-')
+                    .replace(/\u2010/g, '-')
+                    .replace(/\u2012/g, '-')
+                    .replace(/\u2013/g, '-')
+                    .replace(/\u2014/g, '-')
+                    .replace(/\u2212/g, '-');
+                
+                // Try to extract text from common response paths
+                let textContent = '';
+                
+                // Method 1: Direct path extraction
+                if (data.outputs && data.outputs[0] && data.outputs[0].outputs) {
+                    const output = data.outputs[0].outputs[0];
+                    if (output.results && output.results.message) {
+                        textContent = output.results.message.text || '';
+                        if (typeof textContent === 'object') {
+                            textContent = JSON.stringify(textContent);
+                        }
+                    }
+                }
+                
+                // Method 2: Search for text field in decoded string
+                if (!textContent) {
+                    const textMatch = decodedString.match(/"text"\s*:\s*"([^"]+)"/);
+                    if (textMatch) {
+                        textContent = textMatch[1];
+                    }
+                }
+                
+                // Method 3: Look for Test Case patterns in the full string
+                if (!textContent || textContent.length < 50) {
+                    // Find content between "text":" and the closing quote
+                    const bigTextMatch = decodedString.match(/"text"\s*:\s*"([\s\S]*?)(?:","|\"})/);
+                    if (bigTextMatch) {
+                        textContent = bigTextMatch[1];
+                    }
+                }
+                
+                console.log('Extracted test cases text length:', textContent.length);
+                console.log('Test cases preview:', textContent.substring(0, 500));
+                
+                // Clean up the text
+                textContent = textContent
+                    .replace(/\\n/g, '\n')
+                    .replace(/\\t/g, '\t')
+                    .replace(/\\"/g, '"')
+                    .replace(/\\\\/g, '\\');
+
+                return textContent || 'No test cases found in response';
+            } catch (e) {
+                console.error('Error parsing test cases:', e);
+                return 'Error parsing test cases: ' + e.message;
+            }
+        }
+
+        // ============================================
+        // COPY, CLEAR, EXPORT FUNCTIONS
+        // ============================================
+        async function copyTestCases() {
+            const output = document.getElementById('testcaseOutput').textContent;
+            
+            if (!output || output === 'Am Aishubot Here Type your user stories') {
+                alert('No test cases to copy');
+                return;
+            }
+
+            try {
+                await navigator.clipboard.writeText(output);
+                
+                // Visual feedback
+                const copyBtn = document.querySelector('.copy-btn');
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = '✅ Copied!';
+                copyBtn.style.backgroundColor = 'var(--success-color)';
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                    copyBtn.style.backgroundColor = '';
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy:', err);
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = output;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('Test cases copied to clipboard!');
+            }
+        }
+
+        function clearTestCases() {
+            document.getElementById('testcaseOutput').textContent = 'Am Aishubot Here Type your user stories';
+            generatedTestCases = '';
+            hideError('testcaseError');
+            
+            // Visual feedback
+            const clearBtn = document.querySelector('.clear-btn');
+            const originalText = clearBtn.innerHTML;
+            clearBtn.innerHTML = '✅ Cleared!';
+            
+            setTimeout(() => {
+                clearBtn.innerHTML = originalText;
+            }, 1500);
+        }
+
+        function exportToExcel() {
+            const output = document.getElementById('testcaseOutput').textContent;
+            
+            if (!output || output === 'Am Aishubot Here Type your user stories') {
+                alert('No test cases to export');
+                return;
+            }
+
+            try {
+                // Parse test cases from the output
+                const testCases = parseTestCasesForExport(output);
+                
+                if (testCases.length === 0) {
+                    alert('Could not parse test cases for export');
+                    return;
+                }
+
+                // Create CSV content with comma delimiter for proper Excel column separation
+                const headers = ['TC ID', 'Description', 'Steps', 'Expected Result', 'Actual Result'];
+                const csvContent = [
+                    headers.join(','),
+                    ...testCases.map(tc => 
+                        [tc.id, tc.description, tc.steps, tc.expectedResult, tc.actualResult]
+                            .map(field => `"${(field || '').replace(/"/g, '""').replace(/\n/g, ' ')}"`)
+                            .join(',')
+                    )
+                ].join('\n');
+
+                // Add BOM for Excel to recognize UTF-8
+                const BOM = '\uFEFF';
+                const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                
+                link.setAttribute('href', url);
+                link.setAttribute('download', `TestCases_${new Date().toISOString().slice(0,10)}.csv`);
+                link.style.visibility = 'hidden';
+                
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                // Visual feedback
+                const exportBtn = document.querySelector('.export-btn');
+                const originalText = exportBtn.innerHTML;
+                exportBtn.innerHTML = '✅ Exported!';
+                
+                setTimeout(() => {
+                    exportBtn.innerHTML = originalText;
+                }, 2000);
+
+            } catch (err) {
+                console.error('Export error:', err);
+                showError('testcaseError', `Export failed: ${err.message}`);
+            }
+        }
+
+        function parseTestCasesForExport(text) {
+            const testCases = [];
+            
+            // Helper function to extract steps from a block
+            function extractSteps(block) {
+                const stepsMatch = block.match(/(?:Steps?|Pre-?conditions?|Test Steps?)[:\s]*([\s\S]*?)(?=Expected|Actual|$)/i);
+                if (stepsMatch) {
+                    return stepsMatch[1].trim().replace(/\n+/g, '; ').replace(/^[\d\.\-\s]+/gm, '');
+                }
+                return '';
+            }
+            
+            // Pattern 1: Test Case ID: XXX format
+            const tcPattern1 = /Test Case ID:\s*([^\n]+)\n(?:Title:\s*([^\n]+)\n)?(?:Description:\s*([^\n]+)\n)?([\s\S]*?)Expected(?:\s*Result)?:\s*([^\n]+)(?:[\s\S]*?Actual(?:\s*Result)?:\s*([^\n]*))?/gi;
+            
+            let match;
+            while ((match = tcPattern1.exec(text)) !== null) {
+                testCases.push({
+                    id: match[1].trim(),
+                    description: (match[2] || match[3] || '').trim(),
+                    steps: extractSteps(match[4] || ''),
+                    expectedResult: (match[5] || '').trim(),
+                    actualResult: (match[6] || '').trim()
+                });
+            }
+
+            // Pattern 2: TC_XXX or TC-XXX format
+            if (testCases.length === 0) {
+                const tcPattern2 = /(TC[_-][\w-]+)[:\s]*\n?(?:.*?(?:Title|Description)[:\s]*)?([^\n]+)([\s\S]*?)Expected[:\s]*([^\n]+)/gi;
+                while ((match = tcPattern2.exec(text)) !== null) {
+                    testCases.push({
+                        id: match[1].trim(),
+                        description: match[2].trim(),
+                        steps: extractSteps(match[3] || ''),
+                        expectedResult: match[4].trim(),
+                        actualResult: ''
+                    });
+                }
+            }
+
+            // Pattern 3: Split by numbered test cases (1., 2., etc.)
+            if (testCases.length === 0) {
+                const blocks = text.split(/\n(?=\d+\.\s|Test Case)/i);
+                let tcCounter = 1;
+                
+                blocks.forEach(block => {
+                    if (block.trim().length < 20) return;
+                    
+                    const idMatch = block.match(/(?:Test Case ID[:\s]*)?([A-Z_-]*\d+)/i);
+                    const descMatch = block.match(/(?:Description|Title|Verify)[:\s]*([^\n]+)/i);
+                    const stepsText = extractSteps(block);
+                    const expMatch = block.match(/Expected(?:\s*Result)?[:\s]*([^\n]+)/i);
+                    
+                    if (descMatch || block.length > 50) {
+                        testCases.push({
+                            id: idMatch ? idMatch[1].trim() : `TC_${String(tcCounter++).padStart(3, '0')}`,
+                            description: descMatch ? descMatch[1].trim() : block.split('\n')[0].substring(0, 100).trim(),
+                            steps: stepsText,
+                            expectedResult: expMatch ? expMatch[1].trim() : '',
+                            actualResult: ''
+                        });
+                    }
+                });
+            }
+
+            console.log('Parsed test cases for export:', testCases);
+            return testCases;
+        }
+
+        // ============================================
+        // MODAL FUNCTIONS
+        // ============================================
+        function closeModal() {
+            document.getElementById('storyModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('storyModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        console.log('Happy to help you in Testcase generation choose a user story');
+    </script>
+</body>
+</html>
